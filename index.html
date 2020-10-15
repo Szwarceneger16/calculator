@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Material Design for Bootstrap fonts and icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <title>Calucaltor</title>
+</head>
+<style>
+    html {
+        font-size: 62.5%;
+        box-sizing: border-box;
+    }
+
+    .calculator {
+        --my-row-height: 40px;
+        --my-col-height: 60px;
+        border: 1px solid #ccc;
+        border-radius: 15px;
+        background-color: darkslategrey;
+        width: min-content;
+        height: min-content;
+        margin: auto;
+    }
+
+    .calculator-grid {
+        display: grid;
+        grid-template-columns: repeat(4, var(--my-col-height));
+        grid-gap: 5px;
+        padding: 5px;
+        grid-auto-rows: var(--my-row-height);
+        margin: 5px 5px 5px 5px;
+    }
+
+    button {
+        height: 100%;
+        width: 100%;
+        font-size: 250%!important;
+        margin: auto;
+    }
+
+    .btn-number {
+        background-color: #852d12;
+        color: white;
+    }
+
+    .btn-operation {
+        background-color: #03a9f4;
+        color: white;
+    }
+
+    .calculator-screen {
+        color: red;
+        text-align: right;
+        font-size: 250%;
+        border: none;
+        padding: 5px 10px 5px 10px;
+        background-color: #cccccc;
+        width: 100%;
+    }
+
+    #screen {
+        grid-column: 1 / span 4;
+    }
+</style>
+<body>
+<form id="form1"></form>
+<div class="container" >
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col-lg-4 ">
+            <div class="calculator card">
+                <div class="calculator-grid">
+                    <input id="screen" type="text" class="calculator-screen control z-depth-1" value="" form="form1" placeholder="0">
+
+                    <button id="btn-c" type="button" class="btn btn-operation " style="grid-column: 1 / 3">c</button>
+                    <button id="btn-ce" type="button" class="btn btn-operation " style="grid-column: 3 / 5">ce</button>
+
+                    <button type="button" class="btn btn-number ">1</button>
+                    <button type="button" class="btn btn-number ">2</button>
+                    <button type="button" class="btn btn-number ">3</button>
+                    <button type="button" class="btn btn-operation ">&divide;</button>
+
+                    <button type="button" class="btn btn-number ">4</button>
+                    <button type="button" class="btn btn-number ">5</button>
+                    <button type="button" class="btn btn-number ">6</button>
+                    <button type="button" class="btn btn-operation ">&times;</button>
+
+                    <button type="button" class="btn btn-number ">7</button>
+                    <button type="button" class="btn btn-number ">8</button>
+                    <button type="button" class="btn btn-number ">9</button>
+                    <button type="button" class="btn btn-operation ">-</button>
+
+                    <button type="button" class="btn btn-operation ">,</button>
+                    <button type="button" class="btn btn-number ">0</button>
+                    <button type="button" class="btn btn-operation ">=</button>
+                    <button type="button" class="btn btn-operation ">+</button>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+
+
+</div>
+<script src="calculator.js"></script>
+</body>
+</html>
