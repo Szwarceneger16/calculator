@@ -8,7 +8,7 @@ const createCalculator = function() {
 
             this.count = 0;
             this.lastOp = null;
-            this.addOperation = function(num, op) { // number and kind of operation
+            this.addOperation = function(num, op) { // number and type of operation
                 switch (op) {
                     case "\u00F7":// division
                         op = 50;
@@ -97,26 +97,28 @@ const createCalculator = function() {
         this.screenReference = root.getElementsByClassName("calculator-screen")[0];
         this.expressionStack = [new Expression];
         this.operationStack = [];
-        this.expected = "digit";
+        this.expected = new Set(["digit"]);
 
         // VALUE GATHERING SECTION
         this.value = "";
         this.comma = false;
         this.addDigit = function(ee) {
-            if (this.expected !== "digit" && this.expected !== "all") throw "digit wasn't expected";
+            if (!this.expected.has("digit")) throw "digit wasn't expected";
             const parsed = parseFloat(ee);
             if (parsed == NaN) throw 'error during digit parse';
             
             //this.textarea.value += ee;
             this.updateHistory(ee);
             this.value += ee;
-            this.expected = "all";
+            this.expected.add("digit");
+            this.expected.add("operation");
+            this.expected.delete("openBracket");
             this.updateScreen();
         }
 
         this.setComma = function() {
-            if (this.expected !== "digit" && this.expected !== "all") throw "digit wasn't expected";
-            if (this.comma) return;
+            if (!this.expected.has("digit")) throw "comma wasn't expected";
+            if (this.comma) throw "second comma forbidden";
             //this.textarea.value += ',';
             this.updateHistory(".");
             this.value += ".";
@@ -127,45 +129,51 @@ const createCalculator = function() {
         this.previousResult = null;
         this.addOperation = function(op) {
             if ( op === '(') { 
+                if (!this.expected.has("openBracket")) throw "open bracket wasn't expected";
                 this.expressionStack.push(new Expression);
                 this.updateHistory(op);
-                return;
-            } 
-            if (this.expected !== "operation" && this.expected !== "all") throw "operation wasn't expected";
-            let val;
-            if (this.previousResult === null) {
-                val = parseFloat(this.value);
-                if (val == NaN) throw 'number parsing error';
+            
+                //this.expected.delete("openBracket");
             } else {
-                val = this.previousResult;
-                this.previousResult = null;
-            }
-
-            //this.textarea.value += op;
-            this.updateHistory(op);
-            this.value = '';
-            this.comma = false;
-
-            let result = this.expressionStack[this.expressionStack.length - 1].addOperation(val,op);
-            if ( op === ')' && result != undefined) {
-                this.expressionStack.pop();
-                this.previousResult = result;
-                
-            } else if ( op === '=' && result != undefined) {
-                this.expected = "digit";
-                while (this.expressionStack.length != 1) {
-                    this.expressionStack.pop();
-                    result = this.expressionStack[this.expressionStack.length - 1].addOperation(result,this.operationStack.pop());
+                if (!this.expected.has("operation")) throw "operation wasn't expected";
+                let val;
+                if (this.previousResult === null) {
+                    val = parseFloat(this.value);
+                    if (val == NaN) throw 'number parsing error';
+                } else {
+                    val = this.previousResult;
+                    this.previousResult = null;
                 }
-                this.screenReference.value = result;
-                this.expressionStack = [new Expression];
-                this.updateHistory(result);
-                this.updateHistory("newStack");
-            } else {
-                this.expected = "digit";
+
+                //this.textarea.value += op;
+                this.updateHistory(op);
+                this.value = '';
+                this.comma = false;
+
+                let result = this.expressionStack[this.expressionStack.length - 1].addOperation(val,op);
+                if ( op === ')' && result != undefined) {
+                    this.expressionStack.pop();
+                    this.previousResult = result;
+                    
+                } else if ( op === '=' && result != undefined) {
+                    this.expected.add("digit");
+                    this.expected.add("openBracket");
+                    this.expected.delete("operation");
+                    while (this.expressionStack.length != 1) {
+                        this.expressionStack.pop(); //here
+                        result = this.expressionStack[this.expressionStack.length - 1].addOperation(result,this.operationStack.pop());
+                    }
+                    this.screenReference.value = result;
+                    this.expressionStack = [new Expression];
+                    this.updateHistory(result);
+                    this.updateHistory("newStack");
+                } else {
+                    this.expected.add("digit");
+                    this.expected.add("openBracket");
+                    this.expected.delete("operation");
+                }
             }
-            
-            
+
         }
 
         // CALCULATOR CONTROL SECTION
@@ -174,10 +182,10 @@ const createCalculator = function() {
                 this.screenReference.value = this.value;
             }else if (typeof arg === "string") {
                 const prevValue = this.screenReference.value;
-                
+                this.screenReference.style["font-size"] = "200%";
                 this.screenReference.value = arg;
                 setTimeout( () => { 
-                    
+                    this.screenReference.style["font-size"] = "";
                     this.screenReference.value = prevValue;
                 } , 2000);      
             }
@@ -214,6 +222,7 @@ const createCalculator = function() {
         this.ce = function() {
             //this.textarea.value = '';
             this.updateHistory("ce");
+            this.expected = new Set(["digit"]);
             this.screenReference.value = ' ';
             this.value = ' ';
             this.comma = false;
