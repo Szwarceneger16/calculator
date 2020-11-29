@@ -27,9 +27,13 @@ const createCalculator = function() {
                         op = 31;
                     break;
                     case "^":
-                        op = 80;
+                        op = 81;
                     break;
-                    // square possible by exponentiation
+                    case "\u221A": // sqrt
+                        op = 80;
+                        num = 1.0 / num;
+                    break;
+                    // squaring possible by exponentiation
                     default:
                         throw "not recognized operation";
                 }
@@ -81,6 +85,7 @@ const createCalculator = function() {
                             destElement.number += srcElement.number;
                         break;
                         case 80: // exponation
+                        case 81: // sqrt
                         if (__DEBUG) console.log(destElement.number,srcElement.number,"exp");
                             destElement.number = Math.pow(destElement.number,srcElement.number);
                         break;
@@ -145,11 +150,6 @@ const createCalculator = function() {
                     this.previousResult = null;
                 }
 
-                //this.textarea.value += op;
-                this.updateHistory(op);
-                this.value = '';
-                this.comma = false;
-
                 let result = this.expressionStack[this.expressionStack.length - 1].addOperation(val,op);
                 if ( op === ')' && result != undefined) {
                     this.expressionStack.pop();
@@ -159,9 +159,12 @@ const createCalculator = function() {
                     this.expected.add("digit");
                     this.expected.add("openBracket");
                     this.expected.delete("operation");
+                    
                     while (this.expressionStack.length != 1) {
+                        this.previousResult = result;
                         this.expressionStack.pop(); //here
-                        result = this.expressionStack[this.expressionStack.length - 1].addOperation(result,this.operationStack.pop());
+                        this.updateHistory(")");
+                        result = this.expressionStack[this.expressionStack.length - 1].addOperation(this.previousResult,op);
                     }
                     this.screenReference.value = result;
                     this.expressionStack = [new Expression];
@@ -172,6 +175,10 @@ const createCalculator = function() {
                     this.expected.add("openBracket");
                     this.expected.delete("operation");
                 }
+
+                this.updateHistory(op);
+                this.value = '';
+                this.comma = false;
             }
 
         }
@@ -245,6 +252,7 @@ const createCalculator = function() {
         }
         for (const numberButton of calcualtorRoot.getElementsByClassName("btn-operation")) {
             numberButton.addEventListener("click", function () {
+                //console.log(numberButton.innerText === "\u221A");
                 try {
                     retVal.addOperation(numberButton.innerText);
                 } catch (error) {

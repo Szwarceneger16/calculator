@@ -18,7 +18,7 @@
 
     .calculator {
         --my-row-height: 40px;
-        --my-col-height: 60px;
+        --my-col-height: 30px;
         border: 1px solid #ccc;
         border-radius: 15px;
         background-color: darkslategrey;
@@ -29,7 +29,7 @@
 
     .calculator-grid {
         display: grid;
-        grid-template-columns: repeat(4, var(--my-col-height));
+        grid-template-columns: repeat(8, var(--my-col-height));
         grid-gap: 5px;
         padding: 5px;
         grid-auto-rows: var(--my-row-height);
@@ -40,7 +40,9 @@
         height: 100%;
         width: 100%;
         font-size: 250%!important;
-        margin: auto;
+        margin: 0px;
+        padding: 0px;
+        grid-column: span 2;
     }
 
     .btn-number {
@@ -55,7 +57,7 @@
 
     .historyTable {
         width: 100%;
-        grid-column: 1 / span 4;
+        grid-column: 1 / span 8;
         display: block;
         overflow-y: scroll;
     }
@@ -91,7 +93,15 @@
         padding: 5px 10px 5px 10px;
         background-color: #cccccc;
         width: 100%;
-        grid-column: 1 / span 4;
+        grid-column: 1 / span 8;
+    }
+
+    #openingBracket {
+        grid-column: span 1;
+    }
+
+    #closingBracket {
+        grid-column: span 1;
     }
 
 </style>
@@ -114,8 +124,10 @@
                     <button id="btn-c" type="button" class="btn btn-control" >c</button>
                     <!-- style="grid-column: 3 / 5" -->
                     <button id="btn-ce" type="button" class="btn btn-control" >ce</button>
-                    <button type="button" class="btn btn-operation ">(</button>
-                    <button type="button" class="btn btn-operation ">)</button>
+                    <button id="openingBracket" type="button" class="btn btn-operation ">(</button>
+                    <button id="closingBracket" type="button" class="btn btn-operation ">)</button>
+                    <button type="button" class="btn btn-operation ">^</button>
+                    <!-- <button type="button" class="btn btn-operation " style="grid-column: span 1;">&#8730;</button> -->
 
                     <button type="button" class="btn btn-number ">1</button>
                     <button type="button" class="btn btn-number ">2</button>
